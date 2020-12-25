@@ -8,8 +8,12 @@
  * @since 1.36
  */
 class SpecialCreateLocalAccount extends FormSpecialPage {
-	public function __construct() {
+	/** @var CentralAuthServices */
+	private $centralAuthServices;
+
+	public function __construct( CentralAuthServices $centralAuthServices ) {
 		parent::__construct( 'CreateLocalAccount', 'centralauth-createlocal' );
+		$this->centralAuthServices = $centralAuthServices;
 	}
 
 	/**
@@ -73,7 +77,8 @@ class SpecialCreateLocalAccount extends FormSpecialPage {
 		$username = $data['username'];
 		$reason = $data['reason'];
 
-		return CentralAuthUtils::attemptAutoCreateLocalUserFromName( $username, $this->getUser(), $reason );
+		return $this->centralAuthServices
+			->attemptAutoCreateLocalUserFromName( $username, $this->getUser(), $reason );
 	}
 
 	public function onSuccess() {

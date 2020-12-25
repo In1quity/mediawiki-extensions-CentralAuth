@@ -74,8 +74,18 @@
 	"SpecialPages": {
 		"CentralAuth": "SpecialCentralAuth",
 		"CentralLogin": "SpecialCentralLogin",
-		"CentralAutoLogin": "SpecialCentralAutoLogin",
-		"CreateLocalAccount": "SpecialCreateLocalAccount",
+		"CentralAutoLogin": {
+			"class": "SpecialCentralAutoLogin",
+			"services": [
+				"CentralAuth.CentralAuthServices"
+			]
+		},
+		"CreateLocalAccount": {
+			"class": "SpecialCreateLocalAccount",
+			"services": [
+				"CentralAuth.CentralAuthServices"
+			]
+		},
 		"MergeAccount": "SpecialMergeAccount",
 		"GlobalGroupMembership": "SpecialGlobalGroupMembership",
 		"GlobalGroupPermissions": "SpecialGlobalGroupPermissions",
@@ -220,6 +230,7 @@
 		"SpecialSulRenameWarning": "includes/specials/SpecialSulRenameWarning.php",
 		"CentralAuthUser": "includes/CentralAuthUser.php",
 		"CentralAuthUtils": "includes/CentralAuthUtils.php",
+		"CentralAuthServices": "includes/CentralAuthServices.php",
 		"CentralAuthPrimaryAuthenticationProvider": "includes/CentralAuthPrimaryAuthenticationProvider.php",
 		"CentralAuthSecondaryAuthenticationProvider": "includes/CentralAuthSecondaryAuthenticationProvider.php",
 		"CentralAuthHooks": "includes/CentralAuthHooks.php",
@@ -579,5 +590,8 @@
 			}
 		}
 	},
+	"ServiceWiringFiles": [
+		"includes/ServiceWiring.php"
+	],
 	"manifest_version": 2
 }
