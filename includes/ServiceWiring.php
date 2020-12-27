@@ -12,7 +12,8 @@ return [
 			$services->getUserFactory(),
 			$services->getPermissionManager(),
 			$services->getStatsdDataFactory(),
-			$services->getTitleFactory()
+			$services->getTitleFactory(),
+			$services->getHookContainer()
 		);
 	},
 ];

@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Auth\AuthManager;
+use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\PermissionManager;
@@ -56,6 +57,9 @@ class CentralAuthServices {
 	/** @var TitleFactory */
 	private $titleFactory;
 
+	/** @var CentralAuthHookRunner */
+	private $hookRunner;
+
 	public function __construct(
 		LBFactory $lbFactory,
 		ReadOnlyMode $readOnlyMode,
@@ -64,7 +68,8 @@ class CentralAuthServices {
 		UserFactory $userFactory,
 		PermissionManager $permissionManager,
 		IBufferingStatsdDataFactory $statsdDataFactory,
-		TitleFactory $titleFactory
+		TitleFactory $titleFactory,
+		HookContainer $hookContainer
 	) {
 		$this->lbFactory = $lbFactory;
 		$this->readOnlyMode = $readOnlyMode;
@@ -74,6 +79,7 @@ class CentralAuthServices {
 		$this->permissionManager = $permissionManager;
 		$this->statsdDataFactory = $statsdDataFactory;
 		$this->titleFactory = $titleFactory;
+		$this->hookRunner = new CentralAuthHookRunner( $hookContainer );
 	}
 
 	/**
@@ -447,4 +453,23 @@ class CentralAuthServices {
 			JobQueueGroup::singleton( $wiki )->lazyPush( $job );
 		}
 	}
+
+	/**
+	 * Check whether the user's preferences are such that a UI reload is
+	 * recommended.
+	 * @param User $user
+	 * @return bool
+	 */
+	public function isUIReloadRecommended( User $user ) {
+		foreach ( $this->config->get( 'CentralAuthPrefsForUIReload' ) as $pref ) {
+			if ( $user->getOption( $pref ) !== User::getDefaultOption( $pref ) ) {
+				return true;
+			}
+		}
+
+		$recommendReload = false;
+		$this->hookRunner->onCentralAuthIsUIReloadRecommended( $user, $recommendReload );
+		return $recommendReload;
+	}
+
 }

@@ -1472,7 +1472,9 @@ class CentralAuthUser implements IDBAccessObject {
 		global $wgLocalDatabases;
 		static $wikiList;
 		if ( $wikiList === null ) {
-			Hooks::run( 'CentralAuthWikiList', [ &$wikiList ] );
+			$hookRunner = new CentralAuthHookRunner( MediaWikiServices::getInstance()->getHookContainer() );
+			$hookRunner->onCentralAuthWikiList( $wikiList );
+
 			// @phan-suppress-next-line PhanSuspiciousValueComparison May set by hook
 			if ( $wikiList === null ) {
 				$wikiList = $wgLocalDatabases;
